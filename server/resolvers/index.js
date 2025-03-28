@@ -1,17 +1,21 @@
 import fakeData from "../fakeData/index.js"
-import { FolderMoDel } from "../modals/index.js";
+import { AuthorMoDel, FolderMoDel } from "../modals/index.js";
 
 export const resolvers = {
   Query: {
-    folders: async () => {
+    folders: async (parent, args, context) => {
     //   return fakeData.folders;
-        const folders = await FolderMoDel.find()
+        const folders = await FolderMoDel.find({authorId: context.uid})
+        console.log({folders,context})
         return folders
 
     },
-    folder: (parent,args)=>{
+    folder: async (parent,args)=>{
       const folderId =args.folderId;
-      return fakeData.folders.find(folder => folder.id ===folderId);
+      const foundFolder = await FolderMoDel.findOne({
+        _id: folderId
+      })
+      return foundFolder;
     },
     note: (parent,args)=>{
       const noteId =args.noteId;
@@ -28,7 +32,24 @@ export const resolvers = {
       return fakeData.notes.filter(note=>note.folderId === parent.id);
     },
   },
-//   Mutation: {
+  Mutation: {
+      addFolder: async (parent, args, context) =>{
+        const newFolder =  new FolderMoDel({...args, authorId: context.uid});
+        console.log(newFolder);
+        await newFolder.save();
+        return newFolder;
 
-//   }
+      },
+      register: async (parent, args) =>{
+        const newUser = new AuthorMoDel(args);
+        const foundUser = await AuthorMoDel.findOne({uid: args.uid})
+        if(!foundUser){
+          const newUser = new AuthorMoDel(args);
+          await newUser.save();
+          return newUser
+        }else{
+          return foundUser;
+        }
+      }
+  }
 };

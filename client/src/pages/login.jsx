@@ -2,20 +2,36 @@ import React, { useContext, useEffect } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { AuthContext } from "../context/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
+import { graphQLServer } from "../ultils/constants";
+import { graphQLrequest } from "../ultils/request";
+
 const Login = () => {
   const auth = getAuth();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+
   const handleLoginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const res = await signInWithPopup(auth, provider);
+
+    const {user: {uid, displayName}} = await signInWithPopup(auth, provider);
+
+
+    const {data} = await graphQLrequest({query: `mutation register($uid: String!, $name: String!) {
+      register(uid: $uid, name: $name){
+        uid
+        name
+      }
+      }`, variables: {
+        uid,
+        name: displayName
+      }
+    })
+      console.log("register", {data})
   };
-  useEffect(() => {
-    if (user?.uid) {
-      navigate("/"); // Chỉ thực hiện điều hướng sau khi component đã render
-    }
-  }, [user, navigate]);
+  if (localStorage.getItem('accessToken')) {
+    return <Navigate to="/" /> 
+  }
   return (
     <>
       <Typography variant="h3" sx={{ marginBottom: "10px" }}>

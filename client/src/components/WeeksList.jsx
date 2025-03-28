@@ -1,7 +1,7 @@
 import { Box, Card, CardContent, List, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import NewWeek from "./NewWeek";
 const WeeksList = ({ folders = [] }) => {
   const { folderId } = useParams();
   const [activeFolderId, setActiveFolderId] = useState(folderId);
@@ -17,10 +17,11 @@ const WeeksList = ({ folders = [] }) => {
         overflowY: "auto",
       }}
       subheader={
-        <Box>
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
           <Typography sx={{ fontWeight: "bold", color: "white" }}>
             Weeks List
           </Typography>
+          <NewWeek></NewWeek>
         </Box>
       }
     >

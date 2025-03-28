@@ -1,30 +1,45 @@
-import { getAuth } from "firebase/auth";
+import { CircularProgress } from "@mui/material";
+import { getAuth, onIdTokenChanged } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 export const AuthContext = createContext();
+
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);  // ✅ Fix useState
   const auth = getAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
-    const unsubcribed = auth.onIdTokenChanged((user) => {
-      if (user?.uid) {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+      if (user) {
+        const accessToken = await user.getIdToken();  // ✅ Lấy token đúng cách
         setUser(user);
-        localStorage.setItem("accessToken", user.accessToken);
+        
+        // Nếu token thay đổi → Cập nhật localStorage & reload
+        if (accessToken !== localStorage.getItem("accessToken")) {
+          localStorage.setItem("accessToken", accessToken);
+          window.location.reload();
+        }
+
+        setIsLoading(false);
         return;
       }
-      setUser({});
+
+      // Khi không có user → Reset trạng thái
+      setIsLoading(false);
+      setUser(null);
       localStorage.clear();
       navigate("/login");
     });
 
-    return () => {
-      unsubcribed();
-    };
-  }, [auth]);
+    return () => unsubscribe();
+  }, [auth, navigate]);
+
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      {children}
+      {isLoading ? <CircularProgress /> : children}
     </AuthContext.Provider>
   );
 };
