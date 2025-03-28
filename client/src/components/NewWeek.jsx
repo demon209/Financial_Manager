@@ -19,6 +19,7 @@ const NewWeek = () => {
         <Dialog>
             <DialogTitle>
                 New Week
+                
             </DialogTitle>
             <DialogContent>
                 <TextField autoFocus margin='dense' id='name' label='Week Name' fullWidth size='small'
