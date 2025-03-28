@@ -15,6 +15,7 @@ export const notesLoader = async ({ params: { folderId } }) => {
     },})
   return data;
 };
+
 export const noteLoader = async ({ params: { noteId } }) => {
   const query = `query Folder($noteId: String) {
                         note(noteId: $noteId) {

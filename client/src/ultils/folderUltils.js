@@ -10,6 +10,7 @@ export const foldersLoader = async () => {
                       }
                     }`;
   const data = await graphQLrequest({query})
+  
   // const res = await fetch("http://localhost:4000/graphql", {
   //   method: "POST",
   //   headers: {

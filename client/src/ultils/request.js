@@ -17,6 +17,7 @@ export const graphQLrequest = async (payload, options = {}) =>{
                 return null
             }
     }
+    
     const {data} = await res.json();
     return data
     }
