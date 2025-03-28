@@ -13,5 +13,6 @@ const NoteSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
+
 const NoteMoDel = mongoose.model('Note',NoteSchema)
 export default NoteMoDel;
