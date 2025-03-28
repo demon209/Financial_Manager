@@ -59,6 +59,7 @@ const authorizationJWT = async (req , res ,next) =>{
 
 
 
+
 app.use(cors(), authorizationJWT, bodyParser.json(), expressMiddleware(server,{
   context: async ({req, res}) =>{
     return {uid: res.locals.uid}
