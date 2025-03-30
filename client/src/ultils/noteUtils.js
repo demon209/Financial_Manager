@@ -8,6 +8,7 @@ export const notesLoader = async ({ params: { folderId } }) => {
                     notes {
                       id
                       content
+                      detailFinancial
                     }
                   }
                 }`;
@@ -23,6 +24,7 @@ export const noteLoader = async ({ params: { noteId } }) => {
                         note(noteId: $noteId) {
                             id
                             content
+                            detailFinancial
                         }
                         }`;
   const data = await graphQLrequest({query,
