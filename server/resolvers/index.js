@@ -5,10 +5,13 @@ export const resolvers = {
   Query: {
     folders: async (parent, args, context) => {
     //   return fakeData.folders;
-        const folders = await FolderMoDel.find({authorId: context.uid})
+        const folders = await FolderMoDel.find({
+          authorId: context.uid
+        }).sort({
+          updatedAt: 'desc'
+        })
         console.log({folders,context})
         return folders
-
     },
     folder: async (parent,args)=>{
       const folderId =args.folderId;
@@ -23,9 +26,12 @@ export const resolvers = {
     }
   },
   Folder: {
-    author: (parent, args) => {
+    author: async (parent, args) => {
       const authorId = parent.authorId;
-      return fakeData.authors.find((author) => author.id === authorId);
+      const author = await AuthorMoDel.findOne({
+        uid: authorId
+      })
+      return author
     },
     notes: (parent, args) => {
       // const authorId = parent.authorId;
