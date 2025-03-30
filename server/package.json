@@ -20,6 +20,7 @@
     "firebase-admin": "^13.2.0",
     "http": "^0.0.1-security",
     "mongoose": "^8.12.1",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "recharts": "^2.15.1"
   }
 }

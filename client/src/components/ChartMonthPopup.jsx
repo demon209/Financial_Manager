@@ -20,9 +20,6 @@ const barData = {
     },
   ],
 };
-
-
-
   return (
     <Dialog
       open={open}

@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Grid2, Typography } from "@mui/material";
 import { Box } from "@mui/material";
 import UserMenu from "../components/UserMenu";
-import WeeksList from "../components/WeeksList";
+import WeeksList from "../components/MonthsList";
 import { Outlet, useLoaderData } from "react-router-dom";
 
 const Home = () => {
