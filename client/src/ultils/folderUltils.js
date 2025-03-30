@@ -24,3 +24,21 @@ export const foldersLoader = async () => {
   // const { data } = await res.json();
   return data;
 };
+
+export const addNewFolder = async (newFolder) =>{
+  const query = `mutation Mutation($name: String!, $financial: Int!){
+  addFolder(name: $name, financial: $financial){
+    name
+    financial
+    author{
+      name
+    }
+  
+  }
+  }`
+  const data = await graphQLrequest({
+    query, 
+    variables: {name: newFolder.name, financial:newFolder.financial}
+  });
+  return data
+}

@@ -1,5 +1,7 @@
+import { graphQLrequest } from "./request";
+
 export const notesLoader = async ({ params: { folderId } }) => {
-  const query = `query Folder($folderId: String) {
+  const query = `query Folder($folderId: String!) {
                   folder(folderId: $folderId) {
                     id
                     name
