@@ -1,5 +1,5 @@
 import fakeData from "../fakeData/index.js"
-import { AuthorMoDel, FolderMoDel } from "../modals/index.js";
+import { AuthorMoDel, FolderMoDel, NoteMoDel } from "../modals/index.js";
 
 export const resolvers = {
   Query: {
@@ -15,15 +15,15 @@ export const resolvers = {
     },
     folder: async (parent,args)=>{
       const folderId =args.folderId;
-      const foundFolder = await FolderMoDel.findOne({
-        _id: folderId
-      })
+      const foundFolder = await FolderMoDel.findById(folderId)
       return foundFolder;
     },
-    note: (parent,args)=>{
-      const noteId =args.noteId;
-      return fakeData.notes.find(note => note.id ===noteId);
+    note: async (parent, args) => {
+      const noteId = args.noteId;
+      const foundNote = await NoteMoDel.findById(noteId); 
+      return foundNote;
     }
+    
   },
   Folder: {
     author: async (parent, args) => {
@@ -33,10 +33,10 @@ export const resolvers = {
       })
       return author
     },
-    notes: (parent, args) => {
-      // const authorId = parent.authorId;
-      return fakeData.notes.filter(note=>note.folderId === parent.id);
-    },
+    notes: async (parent) => {
+      const notes = await NoteMoDel.find({ folderId: parent._id });
+      return notes;
+    }
   },
   Mutation: {
       addFolder: async (parent, args, context) =>{
@@ -46,8 +46,24 @@ export const resolvers = {
         return newFolder;
 
       },
+      addNote: async (parent, args)=>{
+        const newNote = new NoteMoDel(args)
+        await newNote.save();
+        return newNote
+      },
+      deleteNote: async (parent, args) => {
+        const noteId = args.id;
+        const deletedNote = await NoteMoDel.findByIdAndDelete(noteId);
+        return deletedNote;
+      }
+      ,
+      updateNote: async (parent, args)=>{
+        const noteId = args.id;
+        const note = await NoteMoDel.findByIdAndUpdate(noteId,args)
+        return note
+      },
+  
       register: async (parent, args) =>{
-        const newUser = new AuthorMoDel(args);
         const foundUser = await AuthorMoDel.findOne({uid: args.uid})
         if(!foundUser){
           const newUser = new AuthorMoDel(args);
