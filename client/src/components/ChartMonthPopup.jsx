@@ -8,34 +8,39 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const ChartMonthPopup = ({ open, onClose, folders }) => {
   if (!folders || folders.length === 0) return null;
 
+  // 🔹 Sắp xếp folders theo `createdAt` từ mới đến cũ
+  const sortedFolders = [...folders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-const sortedFolders = [...folders]
-const barData = {
-  labels: sortedFolders.map(folder => folder.name), // Tên tháng đã sắp xếp
-  datasets: [
-    {
-      label: "Chi tiêu hàng tháng",
-      data: sortedFolders.map(folder => folder.financial), // Dữ liệu từ financial
-      backgroundColor: "#42A5F5",
-    },
-  ],
-};
+  // 🔹 Chỉ lấy 12 tháng gần nhất
+  const recent12Months = sortedFolders.slice(0, 12).reverse(); // Đảo ngược để tháng cũ hiển thị trước
+
+  const barData = {
+    labels: recent12Months.map(folder => folder.name), // Tên tháng
+    datasets: [
+      {
+        label: "Tổng chi tiêu tháng",
+        data: recent12Months.map(folder => folder.financial || 0), // Lấy dữ liệu financial, nếu không có thì mặc định 0
+        backgroundColor: "#42A5F5",
+      },
+    ],
+  };
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="lg" // Mở rộng kích thước tối đa
+      maxWidth="lg"
       fullWidth
       PaperProps={{
         sx: {
-          minWidth: "80vw", // Tăng chiều rộng
-          minHeight: "70vh", // Tăng chiều cao
-          padding: 2, // Thêm khoảng cách
+          minWidth: "80vw",
+          minHeight: "70vh",
+          padding: 2,
         },
       }}
     >
       <DialogTitle sx={{ fontSize: "1.5rem", fontWeight: "bold", textAlign: "center" }}>
-        Biểu Đồ Chi Tiêu Hàng Tháng
+        Biểu Đồ Chi Tiêu Hàng Tháng (12 tháng gần nhất)
       </DialogTitle>
       <DialogContent>
         <Bar data={barData} />
