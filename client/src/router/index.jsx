@@ -6,8 +6,9 @@ import ErrorPage from "../pages/ErrorPage";
 import Home from "../pages/Home";
 import Login from "../pages/login";
 import ProtectedRouter from "./protectedRouter";
-import { noteLoader, notesLoader } from "../ultils/noteUtils";
+import { addNote, noteLoader, notesLoader, updateNote, deleteNote } from "../ultils/noteUtils";
 import { foldersLoader } from "../ultils/folderUltils";
+
 const AuthLayout = () => {
   return (
     <AuthProvider>
@@ -19,7 +20,7 @@ const AuthLayout = () => {
 export default createBrowserRouter([
   {
     element: <AuthLayout />,
-    errorElement: <ErrorPage />, //
+    errorElement: <ErrorPage />, 
     children: [
       {
         element: <Login />,
@@ -37,12 +38,18 @@ export default createBrowserRouter([
                 element: <SpendingSection />,
                 path: `folders/:folderId`,
                 loader: notesLoader,
+                action: addNote,    
                 children: [
                   {
-                    element: <Note></Note>,
+                    element: <Note />,
                     path: `note/:noteId`,
-                    loader: noteLoader,
+                    action: updateNote,
+                    loader: noteLoader,   
                   },
+                  {
+                    path: "note/:noteId/delete",
+                    action: deleteNote,
+                  }
                 ],
               },
             ],
