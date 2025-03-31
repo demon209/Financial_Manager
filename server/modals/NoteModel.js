@@ -1,15 +1,19 @@
 import mongoose from "mongoose";
 const NoteSchema = new mongoose.Schema({
-    name: {
-        content: String,
+    content: {
+        type: String,
     },
-    detailFinancial:{
-        type: Number,
+    name: {
+        type: String,
         required: true
     },
     folderId: {
         type: String,
         required: true
+    },
+    detailFinancial:{
+        type: Number,
+        required: true,
     }
 }, {timestamps: true});
 
