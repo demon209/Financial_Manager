@@ -8,13 +8,14 @@ const MonthsList = ({ folders = [] }) => {
   const { folderId } = useParams();
   const [activeFolderId, setActiveFolderId] = useState(folderId);
   const [openChart, setOpenChart] = useState(false); // Trạng thái mở popup
-
+  const currentYear = new Date().getFullYear();
   return (
     <>
       <List sx={{ width: "100%", bgcolor: "#7D9D9C", height: "100%", padding: "10px", textAlign: "left", overflowY: "auto" }}
         subheader={
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Typography sx={{ fontWeight: "bold", color: "white" }}>Months List</Typography>
+            <Typography sx={{ fontWeight: "bold", color: "white" }}>Danh Sách Tháng</Typography>
+            <Typography sx={{ fontWeight: "bold", color: "white" }}>{currentYear}</Typography>
             <NewMonth />
           </Box>
         }
