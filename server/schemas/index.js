@@ -19,11 +19,15 @@ type Query {
 }
 type Note {
     id: String!,
+    name: String!,
     content: String,
-    detailFinancial: Int
+    detailFinancial: Int!
 }
 type Mutation {
     addFolder(name: String!, financial: Int!) : Folder,
+    addNote(name: String!,  content: String!, detailFinancial: Int!, folderId: ID!) : Note,
+    updateNote(id: String!, content: String) : Note,
+    deleteNote(id : String!): Note,
     register(uid: String!, name: String!): Author
 }
 `;
