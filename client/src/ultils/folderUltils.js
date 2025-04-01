@@ -7,6 +7,9 @@ export const foldersLoader = async () => {
                         name
                         financial
                         createAt
+                        notes {
+                          detailFinancial
+                    }
                       }
                     }`;
   const data = await graphQLrequest({query})
