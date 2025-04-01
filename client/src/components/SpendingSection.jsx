@@ -28,7 +28,7 @@ const SpendingSection = () => {
 
   // 🔹 State quản lý popup biểu đồ tròn
   const [openPiePopup, setopenPiePopup] = useState(false); 
-
+  
   // 🔹 State quản lý popup ghi chú
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(""); // Tên ghi chú
@@ -59,21 +59,29 @@ const SpendingSection = () => {
   };
 
   // Gửi dữ liệu khi nhấn "Tạo Ghi Chú"
-  const handleSubmitNewNote = () => {
-    if (!name.trim()) return alert("Vui lòng nhập tên ghi chú!");
-    if (!content.trim()) return alert("Vui lòng nhập nội dung!");
+const handleSubmitNewNote = () => {
+  if (!name.trim()) return alert("Vui lòng nhập tên ghi chú!");
+  if (!content.trim()) return alert("Vui lòng nhập tối thiểu 1 nội dung! Bạn sẽ có thể sửa nội dung sau khi tạo");
 
-    submit(
-      {
-        name, // Tên ghi chú (đã đổi từ title thành name)
-        content, // Nội dung
-        folderId,
-        detailFinancial: Number(detailFinancial) || 0, // Đảm bảo luôn là số
-      },
-      { method: "POST", action: `/folders/${folderId}` }
-    );
-    handleClosePopup();
-  };
+  const totalSpent = folder.notes?.reduce((sum, note) => sum + (note.detailFinancial || 0), 0) || 0;
+  const newTotal = totalSpent + Number(detailFinancial);
+
+  if (newTotal > folder.financial) {
+    return alert("Không thể thêm ghi chú! Tổng chi tiêu vượt quá ngân sách đặt ra trong tháng!.");
+  }
+
+  submit(
+    {
+      name,
+      content,
+      folderId,
+      detailFinancial: Number(detailFinancial) || 0,
+    },
+    { method: "POST", action: `/folders/${folderId}` }
+  );
+  handleClosePopup();
+};
+
 
   // Xóa ghi chú
   const handleDeleteNote = (id) => {
@@ -85,6 +93,11 @@ const SpendingSection = () => {
       }
     }
   };
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('vi-VN').format(value).replace(/,/g, '.');
+  };
+  
+  
 
   return (
     <>
@@ -103,22 +116,29 @@ const SpendingSection = () => {
           }}
         >
           <List
-            subheader={
-              <Box display="flex" alignItems="center" justifyContent="space-between">
-                <Typography sx={{ fontWeight: "bold" }}>Các Mục Chi Tiêu</Typography>
-                <Tooltip title="Add Note">
-                  <IconButton size="small" onClick={handleOpenPopup}>
-                    <NoteAddOutlined />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="View Chart">
-                  <IconButton size="small" onClick={handleopenPiePopup}>
-                    <PieChartOutlined /> {/* Thay thế biểu tượng */}
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            }
-          >
+  subheader={
+    <Box display="flex" flexDirection="column">
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Typography sx={{ fontWeight: "bold" }}>Các Mục Chi Tiêu</Typography>
+        <Tooltip title="Add Note">
+          <IconButton size="small" onClick={handleOpenPopup}>
+            <NoteAddOutlined />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="View Chart">
+          <IconButton size="small" onClick={handleopenPiePopup}>
+            <PieChartOutlined />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      {/* 🔹 Hiển thị tổng ngân sách còn lại */}
+      <Typography sx={{ fontSize: '15px', mt: 1, fontWeight: "bold", color: "green" }}>
+    Ngân sách còn lại: {formatCurrency(folder?.financial - (folder?.notes?.reduce((sum, note) => sum + (note.detailFinancial || 0), 0) || 0))} VNĐ
+  </Typography>
+    </Box>
+  }
+>
+
             {folder?.notes?.map(({ id, name }) => (
               <Box key={id} display="flex" alignItems="center" justifyContent="space-between">
                 <Link
@@ -144,6 +164,7 @@ const SpendingSection = () => {
                 </IconButton>
               </Box>
             ))}
+
           </List>
         </Grid>
         <Grid item xs={8}>
