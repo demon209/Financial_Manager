@@ -1,13 +1,20 @@
 import React from "react";
 import { Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ChartMonthPopup = ({ open, onClose, folders }) => {
   if (!folders || folders.length === 0) return null;
-
   // 🔹 Sắp xếp folders theo `createdAt` từ mới đến cũ
   const sortedFolders = [...folders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -18,9 +25,16 @@ const ChartMonthPopup = ({ open, onClose, folders }) => {
     labels: recent12Months.map(folder => folder.name), // Tên tháng
     datasets: [
       {
-        label: "Tổng chi tiêu tháng",
-        data: recent12Months.map(folder => folder.financial || 0), // Lấy dữ liệu financial, nếu không có thì mặc định 0
+        label: "Ngân sách tháng",
+        data: recent12Months.map(folder => folder.financial || 0),
         backgroundColor: "#42A5F5",
+      },
+      {
+        label: "Đã chi tiêu",
+        data: recent12Months.map(folder =>
+          folder.notes?.reduce((sum, note) => sum + (note.detailFinancial || 0), 0) || 0
+        ),
+        backgroundColor: "#FF7043",
       },
     ],
   };
@@ -44,7 +58,13 @@ const ChartMonthPopup = ({ open, onClose, folders }) => {
       </DialogTitle>
       <DialogContent>
         <Bar data={barData} />
-        <Button onClick={onClose} variant="contained" color="primary" fullWidth sx={{ mt: 2, fontSize: "1.1rem" }}>
+        <Button
+          onClick={onClose}
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2, fontSize: "1.1rem" }}
+        >
           Đóng
         </Button>
       </DialogContent>
