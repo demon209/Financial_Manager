@@ -13,8 +13,8 @@ const UserMenu = () => {
     return <Typography>WTF!? I don't have your data... </Typography>;
   }
   const handleLogout = () => {
-    const auth = user.auth;
-    auth.signOut();
+    user.auth.signOut();
+    handleClose();
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -27,8 +27,9 @@ const UserMenu = () => {
     setAnchorEl(e.currentTarget);
   };
   const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleClose();
+        handleClose();
+        setOpenDialog(true);
+
   };
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -44,16 +45,16 @@ const UserMenu = () => {
         />
       </Box>
       <Menu
-        id="Basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        onBlur={handleClose}
-      >
-        <MenuItem onClick={handleHome}>Trang Chủ</MenuItem>
-        <MenuItem onClick={handleOpenDialog}>Thông Tin Của Tôi</MenuItem>
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-      </Menu>
+  id="Basic-menu"
+  anchorEl={anchorEl}
+  open={open}
+  onClose={handleClose} // Đảm bảo menu đóng đúng cách
+>
+  <MenuItem onClick={handleHome}>Trang Chủ</MenuItem>
+  <MenuItem onClick={handleOpenDialog}>Thông Tin Của Tôi</MenuItem>
+  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+</Menu>
+
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Thông Tin Của Tôi</DialogTitle>
